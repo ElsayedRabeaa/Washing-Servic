@@ -30,7 +30,8 @@ class AuthController extends Controller
      */
     public function register(Request $request) {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|between:2,50',
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
             'email' => 'required|string|email|max:100|unique:users',
             'password' => 'required|string|min:6',
             'number' => 'required|string| |max:11',
@@ -46,13 +47,25 @@ class AuthController extends Controller
         if($validator->fails()){
             return response()->json($validator->errors()->toJson(), 400);
         }
-        $user = User::create(array_merge(
-                    $validator->validated(),
-                    ['password' => bcrypt($request->password)]
-                ));
+        $user = User::create([
+                'first_name' =>$request->input('first_name'),
+                'last_name' =>$request->input('last_name'),
+                'name' =>$request->input('first_name')." ".$request->input('last_name'),
+                'email' =>$request->input('email'),
+                'password' =>\Hash::make($request->input('password')),
+                'number' =>$request->input('number'),
+                'zone_number' =>$request->input('zone_number'),
+                'building_number' =>$request->input('building_number'),
+                 'apartment_number' =>$request->input('apartment_number'),
+                'car_model' =>$request->input('car_model'),
+                 'car_color' =>  $request->input('car_color'),
+                 'car_number' =>$request->input('car_number'),
+                'Car_Wash_Schedule_Days'=>$request->input('Car_Wash_Schedule_Days'),
+                
+                ]);
          $carUser=Car::create([
                 'user_id' =>$user->id,
-                'user_name' =>$request->input('name'),
+                'user_name' =>$request->input('first_name')." ".$request->input('last_name'),
                 'car_model' =>$request->input('car_model'),
                  'car_color' =>  $request->input('car_color'),
                  'car_number' =>$request->input('car_number'),
@@ -111,54 +124,173 @@ class AuthController extends Controller
 
 
 
-    public function update(){
+    
+    
+    
+    
+    public function updateFirstName(Request $request){
         if( auth()->check()){ 
-            $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'number' => 'required|unique:users',
-            'email' => 'required|string|email|max:100|unique:users',
-            'password' => 'required|string|min:6',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'errors' => $validator->errors(),
-            ]);
-        }
+         
         $User=User::where('id',auth()->user()->id)->first();
 
         if(!$User){
             return response()->json([
             'message' => 'User not found',
             ],404);
-        }
-
-        $User->update([
-                'name' =>$request->input('name'),
-                'number' =>$request->input('number'),
-                 'email' =>  $request->input('email'),
-                 'password' =>$request->input('password'),
-            ]);
-        if($User){
-            return response()->json([
-                'message' => 'User  updated successfully',
-
-                ],200);
-        }
-
-        if($request->all() == null){
+        }else{
             
-            return response()->json([
-                'message'=>' You Must Edit a One Value at Least',
-            ],404);
-
+             $User->update([
+                 "first_name"=>$request->first_name
+                 ]);
+            
         }
-    }
+          return response()->json([
+         "message" => "FirstName Updated Successfully",
+         
+     ],401);
+          
+        }
+
+     
     else{
        return response()->json([
          "message" => "You Arenot Authenticated",
          
      ],401);
      } 
+     
+     
+    }
+    
+    public function updateLastName(Request $request){
+        if( auth()->check()){ 
+         
+        $User=User::where('id',auth()->user()->id)->first();
+
+        if(!$User){
+            return response()->json([
+            'message' => 'User not found',
+            ],404);
+        }else{
+            
+             $User->update([
+                 "last_name"=>$request->last_name
+                 ]);
+            
+        }
+             return response()->json([
+         "message" => "LastName Updated Successfully",
+         
+     ],401);
+        }
+
+     
+    else{
+       return response()->json([
+         "message" => "You Arenot Authenticated",
+         
+     ],401);
+     } 
+     
+     
+    }
+    
+    public function updateEmail(Request $request){
+        if( auth()->check()){ 
+         
+        $User=User::where('id',auth()->user()->id)->first();
+
+        if(!$User){
+            return response()->json([
+            'message' => 'User not found',
+            ],404);
+        }else{
+            
+             $User->update([
+                 "email"=>$request->email
+                 ]);
+            
+        }
+             return response()->json([
+         "message" => "Email Updated Successfully",
+         
+     ],401);
+        }
+
+     
+    else{
+       return response()->json([
+         "message" => "You Arenot Authenticated",
+         
+     ],401);
+     } 
+     
+     
+    }
+    
+    public function updatePassword(Request $request){
+        if( auth()->check()){ 
+         
+        $User=User::where('id',auth()->user()->id)->first();
+
+        if(!$User){
+            return response()->json([
+            'message' => 'User not found',
+            ],404);
+        }else{
+            
+             $User->update([
+                 "password"=>$request->password
+                 ]);
+            
+        }
+             return response()->json([
+         "message" => "Password Updated Successfully",
+         
+     ],401);
+        }
+
+     
+    else{
+       return response()->json([
+         "message" => "You Arenot Authenticated",
+         
+     ],401);
+     } 
+     
+     
+    }
+    
+    public function updateNumber(Request $request){
+        if( auth()->check()){ 
+         
+        $User=User::where('id',auth()->user()->id)->first();
+
+        if(!$User){
+            return response()->json([
+            'message' => 'User not found',
+            ],404);
+        }else{
+            
+             $User->update([
+                 "number"=>$request->number
+                 ]);
+            
+        }
+             return response()->json([
+         "message" => "Number Updated Successfully",
+         
+     ],401);
+        }
+
+     
+    else{
+       return response()->json([
+         "message" => "You Arenot Authenticated",
+         
+     ],401);
+     } 
+     
+     
     }
 }
